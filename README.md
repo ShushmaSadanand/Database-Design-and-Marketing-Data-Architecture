@@ -65,3 +65,37 @@ CREATE TABLE Bookings (
     FOREIGN KEY (customer_id) REFERENCES Customers(customer_id) ON DELETE CASCADE,
     FOREIGN KEY (type_id) REFERENCES Accommodation_Types(type_id)
 );
+
+### 2. Marketing Analytics Queries (DML & Select)
+These advanced multi-table relational joins, data aggregations, and filtering clauses extract actionable consumer behavior trends:
+
+A. Customer Lifetime Value (CLV) & Channel Performance Audit
+Business Purpose: Identifies which digital marketing channels bring in the highest-spending customers to optimize budget allocation.
+
+SELECT 
+    c.acquisition_channel AS marketing_channel,
+    COUNT(DISTINCT c.customer_id) AS total_customers_acquired,
+    COUNT(b.booking_id) AS total_bookings_generated,
+    SUM(b.total_amount_paid) AS total_revenue,
+    ROUND(AVG(b.total_amount_paid), 2) AS average_order_value,
+    ROUND(SUM(b.total_amount_paid) / COUNT(DISTINCT c.customer_id), 2) AS customer_lifetime_value
+FROM Customers c
+LEFT JOIN Bookings b ON c.customer_id = b.customer_id
+WHERE b.booking_status = 'Confirmed'
+GROUP BY c.acquisition_channel
+ORDER BY total_revenue DESC;
+
+B. High-Value Asset Utilization & Revenue Run-Rate
+Business Purpose: Evaluates which accommodation models generate the highest occupancy turnover to drive dynamic seasonal pricing adjustments.
+
+SELECT 
+    a.category_name AS accommodation_style,
+    COUNT(b.booking_id) AS total_reservations,
+    SUM(DATEDIFF(b.check_out_date, b.check_in_date)) AS total_nights_occupied,
+    SUM(b.total_amount_paid) AS gross_revenue_contribution,
+    ROUND(AVG(DATEDIFF(b.check_out_date, b.check_in_date)), 1) AS average_stay_duration
+FROM Accommodation_Types a
+JOIN Bookings b ON a.type_id = b.type_id
+WHERE b.booking_status = 'Confirmed'
+GROUP BY a.type_id, a.category_name
+ORDER BY gross_revenue_contribution DESC;
