@@ -22,3 +22,46 @@ An enterprise-ready relational database architecture designed from scratch for *
 * Conceptual Data Modeling & Entity-Relationship Diagramming (ERDs)
 * Schema Structural Engineering (Primary Keys, Foreign Keys, Constraints, Data Types)
 * Analytics Engineering, Customer Data Architecture, & Data-Driven Personalization
+
+
+---
+
+## Relational Schema & Analytical SQL Engine
+**Database Paradigm:** Relational Database Management System (RDBMS)  
+**Core Objective:** Translate physical business requirements (The Glamping Saccargia Project) into normalized tables and run high-value marketing queries.
+
+### 1. Data Definition Language (DDL) Schema
+This normalized schema enforces referential integrity across your customer records, accommodation types, bookings, and platform marketing interactions:
+
+```sql
+-- 1. Accommodation Categories
+CREATE TABLE Accommodation_Types (
+    type_id INT PRIMARY KEY AUTO_INCREMENT,
+    category_name VARCHAR(50) NOT NULL, -- e.g., Luxury Tent, Eco-Pod, Suite Dome
+    base_price_per_night DECIMAL(10,2) NOT NULL,
+    max_capacity INT NOT NULL
+);
+
+-- 2. Customer Registry (CRM Hub)
+CREATE TABLE Customers (
+    customer_id INT PRIMARY KEY AUTO_INCREMENT,
+    first_name VARCHAR(50) NOT NULL,
+    last_name VARCHAR(50) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    phone_number VARCHAR(20),
+    acquisition_channel VARCHAR(50), -- e.g., Instagram Ads, Google SEO, Direct
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 3. Reservation System Matrix
+CREATE TABLE Bookings (
+    booking_id INT PRIMARY KEY AUTO_INCREMENT,
+    customer_id INT,
+    type_id INT,
+    check_in_date DATE NOT NULL,
+    check_out_date DATE NOT NULL,
+    total_amount_paid DECIMAL(10,2) NOT NULL,
+    booking_status VARCHAR(20) DEFAULT 'Confirmed', -- Confirmed, Cancelled
+    FOREIGN KEY (customer_id) REFERENCES Customers(customer_id) ON DELETE CASCADE,
+    FOREIGN KEY (type_id) REFERENCES Accommodation_Types(type_id)
+);
