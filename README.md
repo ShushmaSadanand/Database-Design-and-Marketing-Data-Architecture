@@ -66,12 +66,12 @@ CREATE TABLE Bookings (
     FOREIGN KEY (type_id) REFERENCES Accommodation_Types(type_id)
 );
 
+```
 ### 2. Marketing Analytics Queries (DML & Select)
 These advanced multi-table relational joins, data aggregations, and filtering clauses extract actionable consumer behavior trends:
 
 A. Customer Lifetime Value (CLV) & Channel Performance Audit
-Business Purpose: Identifies which digital marketing channels bring in the highest-spending customers to optimize budget allocation.
-
+```sql
 SELECT 
     c.acquisition_channel AS marketing_channel,
     COUNT(DISTINCT c.customer_id) AS total_customers_acquired,
@@ -84,10 +84,10 @@ LEFT JOIN Bookings b ON c.customer_id = b.customer_id
 WHERE b.booking_status = 'Confirmed'
 GROUP BY c.acquisition_channel
 ORDER BY total_revenue DESC;
+```
 
 B. High-Value Asset Utilization & Revenue Run-Rate
-Business Purpose: Evaluates which accommodation models generate the highest occupancy turnover to drive dynamic seasonal pricing adjustments.
-
+```sql
 SELECT 
     a.category_name AS accommodation_style,
     COUNT(b.booking_id) AS total_reservations,
@@ -99,3 +99,4 @@ JOIN Bookings b ON a.type_id = b.type_id
 WHERE b.booking_status = 'Confirmed'
 GROUP BY a.type_id, a.category_name
 ORDER BY gross_revenue_contribution DESC;
+```
